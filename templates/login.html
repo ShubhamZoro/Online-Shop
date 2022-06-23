@@ -1,0 +1,70 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=devices-width, initial-scale=1.0">
+    <title>Online Shop</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+</head>
+<body>
+  <div class="header">
+    <div class="containers">
+  
+      <div class="navbar">
+        <div class="logo">
+          <img src="../static/logo.png" width="125px">
+        </div>
+        <nav>
+          <ul id="MenuItems">
+            <li >
+              <a href="{{ url_for('home') }}" > Home </a>
+            </li>
+            <li>
+              <a href="{{ url_for('product') }}"> Product </a>
+            </li>
+            <li>
+              <a href="{{ url_for('login') }}"> Login </a>
+            </li>
+            <li>
+              <a href="{{ url_for('register') }}"> Register</a>
+            </li>
+            {% if  current_user.id==1: %}
+              <li>
+                <a href="{{ url_for('add_new_product') }}"> Add Product </a>
+              </li>
+              {% endif %}
+            
+          </ul>
+        </nav>
+        <img src="../static/cart.png" width="30px" height="30px">
+        <img src="../static/menu.png" class="menu-icon" onclick="menutoggle()">
+      </div>
+      <div class="row">
+        <div class="col-2">
+          <img src="../static/image1.png"  >
+        </div>
+        <div class="col-2" >
+          <form method="POST" action="{{ url_for('login') }}">
+            <div >
+              {{ form.csrf_token }}
+          <p>{{ form.email.label }} <br>{{ form.email(size=30) }}</p>
+          <p>{{ form.password.label}}<br> {{ form.password(size=30) }}<p>
+
+          <input type="submit" value="Login">
+            </div>
+    
+        </form>
+        </div>
+    </div>
+    </div>
+</div>
+    
+    {% include "footer.html" %}
+      {% endblock %}
+
+      
