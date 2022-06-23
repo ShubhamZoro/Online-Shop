@@ -38,6 +38,7 @@ class ProductForm(FlaskForm):
     rating = SelectField("Rating", choices=["⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"],
                          validators=[DataRequired()])
     img=StringField("URL",validators=[DataRequired()])
+    Product_detail = StringField("Product_detail", validators=[DataRequired()])
     submit=SubmitField("SUBMIT")
 
 class User(UserMixin, db.Model):
@@ -46,6 +47,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(100))
+    cart2=relationship("Cart",back_populates="cart1")
 
 
 class Product(db.Model):
@@ -54,7 +56,19 @@ class Product(db.Model):
     rating = db.Column(db.String(100), unique=False)
     Price = db.Column(db.String(100))
     Product_name = db.Column(db.String(100))
+    Product_detail=db.Column(db.String(100))
     url = db.Column(db.String(100))
+
+class Cart(db.Model):
+    __tablename__ = "cart"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    rating = db.Column(db.String(100), unique=False)
+    Price = db.Column(db.String(100))
+    Product_name = db.Column(db.String(100))
+    Product_detail=db.Column(db.String(100))
+    url = db.Column(db.String(100))
+    cart1 = relationship("User", back_populates="cart2")
 
 db.create_all()
 
@@ -67,7 +81,6 @@ def admin_only(f):
     return decorated_function
 @app.route("/")
 def home():
-
     return render_template("index.html",current_user=current_user)
 
 @app.route('/register', methods=["GET", "POST"])
@@ -133,6 +146,7 @@ def add_new_product():
             Price=form.Price.data,
             rating=form.rating.data,
             url=form.img.data,
+            Product_detail=form.Product_detail.data
 
         )
         db.session.add(new_Product)
@@ -141,10 +155,37 @@ def add_new_product():
 
     return render_template("add-product.html", form=form, current_user=current_user)
 
+@app.route("/productdetail/<int:product_id>", methods=["GET","POST"])
+def productdetail(product_id):
+    requested_product = Product.query.get(product_id)
+    product = Product.query.all()
+    return render_template("product-detail.html", curr_product=requested_product,  current_user=current_user,Products=product)
+
+@app.route("/cart/<int:product_id>", methods=["GET","POST"])
+def cart(product_id):
+    requested_product = Product.query.get(product_id)
+
+    new_Product = Cart(
+            Product_name=requested_product.Product_name,
+            Price=requested_product.Price,
+            rating=requested_product.rating,
+            url=requested_product.url,
+            Product_detail=requested_product.Product_detail
+
+        )
+    db.session.add(new_Product)
+    db.session.commit()
+    product = Cart.query.all()
+
+    return render_template("cart.html", curr_product=requested_product,  current_user=current_user,Products=product)
+
+
 @app.route("/product")
 def product():
     product=Product.query.all()
     print(product[0].url)
     return render_template("product.html",Products=product)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
