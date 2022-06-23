@@ -1,0 +1,94 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=devices-width, initial-scale=1.0">
+    <title>Online Shop</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body background="white">
+  <div class="header">
+    <div class="containers">
+
+      <div class="navbar">
+        <div class="logo">
+          <img src="../static/logo.png" width="125px">
+        </div>
+        <nav>
+          <ul id="MenuItems">
+            <li >
+              <a href="{{ url_for('home') }}" > Home </a>
+            </li>
+            <li>
+              <a href="{{ url_for('product') }}"> Product </a>
+            </li>
+              {% if not current_user.is_authenticated: %}
+            <li>
+              <a href="{{ url_for('login') }}"> Login </a>
+            </li>
+
+            <li>
+              <a href="{{ url_for('register') }}"> Register</a>
+            </li>
+                {% else: %}
+              <li>
+              <a href="{{ url_for('logout') }}"> Logout</a>
+            </li>
+              {% endif %}
+              {% if  current_user.id==1: %}
+              <li>
+                <a href="{{ url_for('add_new_product') }}"> Add Product </a>
+              </li>
+              {% endif %}
+
+          </ul>
+        </nav>
+        {% if current_user.is_authenticated: %}
+        <li style="list-style: none;">
+          <a href="" style="text-decoration: none;"> <img src="../static/cart.png" width="30px" height="30px"></a>
+        </li>
+        {% endif %}
+
+        <img src="../static/menu.png" class="menu-icon" onclick="menutoggle()">
+      </div>
+         </div>
+       </div>
+
+
+    </div>
+       <div class="categories">
+        <div class="small_container">
+            <div class="row">
+                {% for i in range(curr_product.id,Products|length): %}
+
+                <div class="col-2">
+                                        <a href="{{url_for('productdetail',product_id=Products[i].id)}}"><img src="{{Products[i].url}}" width="50%" alt=""></a>
+                </div>
+                <div class="col-2" >
+                    <h1>{{Products[i].Product_name}}</h1>
+                    <h4>{{Products[i].Price}}</h4>
+                    <p>{{Products[i].rating}}</p>
+                    <select >
+                      <option>Select Size</option>
+                      <option>XXL</option>
+                      <option>Large</option>
+                      <option>Medium</option>
+                      <option>Small</option>
+                    </select>
+                    <input type="number" value="1">
+                    <p style="padding-top: 20px;">{{curr_product.Product_detail}}</p>
+
+                </div>
+                <br>
+            {%endfor%}
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+        {% endblock %}
