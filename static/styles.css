@@ -275,6 +275,7 @@ nav ul li{
     /* Add shadows to create the "card" effect */
    box-shadow: 10px 10px lightblue;
     transition: 0.3s;
+    background-color: white;
   }
   
   /* On mouse-over, add a deeper shadow */
